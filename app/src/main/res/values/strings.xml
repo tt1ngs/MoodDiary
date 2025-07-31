@@ -1,0 +1,103 @@
+<resources>
+    <!-- Название приложения -->
+    <string name="app_name">MoodDiary</string>
+
+    <!-- Главный экран -->
+    <string name="home_title">Как дела сегодня?</string>
+    <string name="home_subtitle">Выберите ваше настроение</string>
+    <string name="note_title">Заметка (опционально)</string>
+    <string name="note_placeholder">Напишите, как вы себя чувствуете сегодня...</string>
+    <string name="save_entry">Сохранить запись</string>
+
+    <!-- Настроения -->
+    <string name="mood_very_sad">Очень грустно</string>
+    <string name="mood_sad">Грустно</string>
+    <string name="mood_slightly_sad">Немного грустно</string>
+    <string name="mood_neutral">Нейтрально</string>
+    <string name="mood_slightly_happy">Немного радостно</string>
+    <string name="mood_happy">Радостно</string>
+    <string name="mood_very_happy">Очень радостно</string>
+
+    <!-- Навигация -->
+    <string name="nav_home">Главная</string>
+    <string name="nav_calendar">Календарь</string>
+    <string name="nav_statistics">Статистика</string>
+    <string name="nav_settings">Настройки</string>
+
+    <!-- Календарь -->
+    <string name="calendar_previous_month">Предыдущий месяц</string>
+    <string name="calendar_next_month">Следующий месяц</string>
+    <string name="mood_legend">Легенда настроений</string>
+
+    <!-- Месяцы -->
+    <string name="month_january">Январь</string>
+    <string name="month_february">Февраль</string>
+    <string name="month_march">Март</string>
+    <string name="month_april">Апрель</string>
+    <string name="month_may">Май</string>
+    <string name="month_june">Июнь</string>
+    <string name="month_july">Июль</string>
+    <string name="month_august">Август</string>
+    <string name="month_september">Сентябрь</string>
+    <string name="month_october">Октябрь</string>
+    <string name="month_november">Ноябрь</string>
+    <string name="month_december">Декабрь</string>
+
+    <!-- Дни недели -->
+    <string name="day_monday">Пн</string>
+    <string name="day_tuesday">Вт</string>
+    <string name="day_wednesday">Ср</string>
+    <string name="day_thursday">Чт</string>
+    <string name="day_friday">Пт</string>
+    <string name="day_saturday">Сб</string>
+    <string name="day_sunday">Вс</string>
+
+    <!-- Статистика -->
+    <string name="statistics_title">Статистика настроения</string>
+    <string name="statistics_subtitle">За последние 30 дней</string>
+    <string name="overall_stats">Общая статистика</string>
+    <string name="total_entries">Записей</string>
+    <string name="average_mood">Среднее настроение</string>
+    <string name="mood_distribution">Распределение настроений</string>
+    <string name="detailed_stats">Детальная статистика</string>
+    <string name="positive_moods">Позитивные</string>
+    <string name="neutral_moods">Нейтральные</string>
+    <string name="negative_moods">Негативные</string>
+    <string name="no_data">Нет данных для отображения</string>
+
+    <!-- Детали записи -->
+    <string name="entry_from">Запись от %1$s</string>
+    <string name="back">Назад</string>
+    <string name="edit">Редактировать</string>
+    <string name="delete">Удалить</string>
+    <string name="your_note">Ваша заметка</string>
+    <string name="ai_analysis">AI Анализ</string>
+    <string name="sentiment_score">Оценка тональности: %1$s</string>
+
+    <!-- AI анализ -->
+    <string name="positive_sentiment">Позитивное настроение! Отличный день!</string>
+    <string name="negative_sentiment">Негативное настроение. Попробуйте расслабиться.</string>
+    <string name="neutral_sentiment">Нейтральное настроение. Все в порядке.</string>
+
+    <!-- Настройки -->
+    <string name="settings_title">Настройки</string>
+    <string name="appearance_section">Внешний вид</string>
+    <string name="dark_theme">Темная тема</string>
+    <string name="dark_theme_subtitle">Переключить на темную тему</string>
+    <string name="notifications_section">Уведомления</string>
+    <string name="notifications_title">Напоминания</string>
+    <string name="notifications_subtitle">Ежедневные напоминания о записи настроения</string>
+    <string name="data_section">Данные</string>
+    <string name="export_data">Экспорт данных</string>
+    <string name="export_data_subtitle">Скачать записи в файл</string>
+    <string name="about_section">О приложении</string>
+    <string name="about_app">О MoodDiary</string>
+    <string name="app_version">Версия 1.0.0</string>
+    <string name="app_description">Ваш персональный дневник настроения с поддержкой ИИ</string>
+
+    <!-- Сообщения -->
+    <string name="entry_saved">Запись сохранена!</string>
+    <string name="entry_deleted">Запись удалена</string>
+    <string name="save_error">Ошибка сохранения: %1$s</string>
+    <string name="delete_error">Ошибка удаления: %1$s</string>
+</resources>

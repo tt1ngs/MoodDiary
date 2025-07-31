@@ -1,0 +1,104 @@
+<resources>
+    <!-- App name -->
+    <string name="app_name">MoodDiary</string>
+
+    <!-- Home screen -->
+    <string name="home_title">How are you today?</string>
+    <string name="home_subtitle">Choose your mood</string>
+    <string name="note_title">Note (optional)</string>
+    <string name="note_placeholder">Write how you feel today...</string>
+    <string name="save_entry">Save entry</string>
+
+    <!-- Moods -->
+    <string name="mood_very_sad">Very sad</string>
+    <string name="mood_sad">Sad</string>
+    <string name="mood_slightly_sad">Slightly sad</string>
+    <string name="mood_neutral">Neutral</string>
+    <string name="mood_slightly_happy">Slightly happy</string>
+    <string name="mood_happy">Happy</string>
+    <string name="mood_very_happy">Very happy</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_calendar">Calendar</string>
+    <string name="nav_statistics">Statistics</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Calendar -->
+    <string name="calendar_previous_month">Previous month</string>
+    <string name="calendar_next_month">Next month</string>
+    <string name="mood_legend">Mood legend</string>
+
+    <!-- Months -->
+    <string name="month_january">January</string>
+    <string name="month_february">February</string>
+    <string name="month_march">March</string>
+    <string name="month_april">April</string>
+    <string name="month_may">May</string>
+    <string name="month_june">June</string>
+    <string name="month_july">July</string>
+    <string name="month_august">August</string>
+    <string name="month_september">September</string>
+    <string name="month_october">October</string>
+    <string name="month_november">November</string>
+    <string name="month_december">December</string>
+
+    <!-- Days of week -->
+    <string name="day_monday">Mon</string>
+    <string name="day_tuesday">Tue</string>
+    <string name="day_wednesday">Wed</string>
+    <string name="day_thursday">Thu</string>
+    <string name="day_friday">Fri</string>
+    <string name="day_saturday">Sat</string>
+    <string name="day_sunday">Sun</string>
+
+    <!-- Statistics -->
+    <string name="statistics_title">Mood Statistics</string>
+    <string name="statistics_subtitle">Last 30 days</string>
+    <string name="overall_stats">Overall Statistics</string>
+    <string name="total_entries">Entries</string>
+    <string name="average_mood">Average mood</string>
+    <string name="mood_distribution">Mood distribution</string>
+    <string name="detailed_stats">Detailed statistics</string>
+    <string name="positive_moods">Positive</string>
+    <string name="neutral_moods">Neutral</string>
+    <string name="negative_moods">Negative</string>
+    <string name="no_data">No data to display</string>
+
+    <!-- Entry details -->
+    <string name="entry_from">Entry from %1$s</string>
+    <string name="back">Back</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="your_note">Your note</string>
+    <string name="ai_analysis">AI Analysis</string>
+    <string name="sentiment_score">Sentiment score: %1$s</string>
+
+    <!-- AI analysis -->
+    <string name="positive_sentiment">Positive mood! Great day!</string>
+    <string name="negative_sentiment">Negative mood. Try to relax.</string>
+    <string name="neutral_sentiment">Neutral mood. Everything is okay.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="appearance_section">Appearance</string>
+    <string name="dark_theme">Dark theme</string>
+    <string name="dark_theme_subtitle">Switch to dark theme</string>
+    <string name="notifications_section">Notifications</string>
+    <string name="notifications_title">Reminders</string>
+    <string name="notifications_subtitle">Daily mood entry reminders</string>
+    <string name="data_section">Data</string>
+    <string name="export_data">Export data</string>
+    <string name="export_data_subtitle">Download entries to file</string>
+    <string name="about_section">About</string>
+    <string name="about_app">About MoodDiary</string>
+    <string name="app_version">Version 1.0.0</string>
+    <string name="app_description">Your personal mood diary with AI support</string>
+
+    <!-- Messages -->
+    <string name="entry_saved">Entry saved!</string>
+    <string name="entry_deleted">Entry deleted</string>
+    <string name="save_error">Save error: %1$s</string>
+    <string name="delete_error">Delete error: %1$s</string>
+</resources>
+

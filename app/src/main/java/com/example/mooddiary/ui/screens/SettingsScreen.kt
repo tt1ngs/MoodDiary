@@ -1,31 +1,32 @@
 package com.example.mooddiary.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.FileDownload
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.mooddiary.ui.components.GlassCard
 import com.example.mooddiary.ui.theme.*
 
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier
 ) {
-    var darkModeEnabled by remember { mutableStateOf(false) }
-    var notificationsEnabled by remember { mutableStateOf(true) }
     val scrollState = rememberScrollState()
 
     Column(
@@ -35,198 +36,278 @@ fun SettingsScreen(
             .verticalScroll(scrollState)
             .padding(16.dp)
     ) {
+        // Заголовок
         Text(
             text = "Настройки",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(bottom = 24.dp)
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
         )
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        // Уведомления
+        NotificationSettings()
 
-        SettingsSection(title = "Внешний вид") {
-            SettingsItem(
-                icon = Icons.Default.DarkMode,
-                title = "Темная тема",
-                subtitle = "Переключить на темную тему",
-                trailing = {
-                    Switch(
-                        checked = darkModeEnabled,
-                        onCheckedChange = { darkModeEnabled = it },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = SoftBlue,
-                            checkedTrackColor = LightLavender
-                        )
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Тема
+        ThemeSettings()
+
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Экспорт данных
+        ExportSettings()
+
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // О приложении
+        AboutSettings()
+    }
+}
+
+@Composable
+fun NotificationSettings() {
+    var notificationsEnabled by remember { mutableStateOf(true) }
+    var selectedTime by remember { mutableStateOf("20:00") }
+
+    GlassCard(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(
+                imageVector = Icons.Default.Notifications,
+                contentDescription = "Уведомления",
+                tint = AccentYellow,
+                modifier = Modifier.size(24.dp)
+            )
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Ежедневные напоминания",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                
+                Text(
+                    text = "Напоминание записать настроение",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White.copy(alpha = 0.7f)
+                )
+            }
+            
+            Switch(
+                checked = notificationsEnabled,
+                onCheckedChange = { notificationsEnabled = it },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = AccentYellow,
+                    checkedTrackColor = AccentYellow.copy(alpha = 0.5f)
+                )
+            )
+        }
+        
+        if (notificationsEnabled) {
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Время напоминания:",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White.copy(alpha = 0.8f)
+                )
+                
+                Spacer(modifier = Modifier.width(16.dp))
+                
+                // Упрощенный селектор времени
+                Card(
+                    onClick = { /* TODO: Открыть TimePicker */ },
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White.copy(alpha = 0.2f)
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = selectedTime,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun ThemeSettings() {
+    var isDarkTheme by remember { mutableStateOf(true) }
+
+    GlassCard(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(
+                imageVector = Icons.Default.Palette,
+                contentDescription = "Тема",
+                tint = AccentYellow,
+                modifier = Modifier.size(24.dp)
+            )
+            
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Темная тема",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+
+                Text(
+                    text = "Автоматическое переключение по системе",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White.copy(alpha = 0.7f)
+                )
+            }
+
+            Switch(
+                checked = isDarkTheme,
+                onCheckedChange = { isDarkTheme = it },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = AccentYellow,
+                    checkedTrackColor = AccentYellow.copy(alpha = 0.5f)
+                )
             )
         }
+    }
+}
 
-        Spacer(modifier = Modifier.height(16.dp))
+@Composable
+fun ExportSettings() {
+    GlassCard(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Share,
+                    contentDescription = "Экспорт",
+                    tint = AccentYellow,
+                    modifier = Modifier.size(24.dp)
+                )
 
-        SettingsSection(title = "Уведомления") {
-            SettingsItem(
-                icon = Icons.Default.Notifications,
-                title = "Напоминания",
-                subtitle = "Ежедневные напоминания о записи настроения",
-                trailing = {
-                    Switch(
-                        checked = notificationsEnabled,
-                        onCheckedChange = { notificationsEnabled = it },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = SoftBlue,
-                            checkedTrackColor = LightLavender
-                        )
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Экспорт данных",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+
+                    Text(
+                        text = "Сохранить записи в файл",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White.copy(alpha = 0.7f)
                     )
                 }
-            )
-        }
+            }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        SettingsSection(title = "Данные") {
-            SettingsItem(
-                icon = Icons.Default.FileDownload,
-                title = "Экспорт данных",
-                subtitle = "Скачать записи в файл",
-                onClick = {
-                    // TODO: Реализовать экспорт данных
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedButton(
+                    onClick = { /* TODO: Экспорт в CSV */ },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color.White
+                    ),
+                    border = ButtonDefaults.outlinedButtonBorder.copy(
+                        brush = androidx.compose.ui.graphics.SolidColor(Color.White.copy(alpha = 0.3f))
+                    )
+                ) {
+                    Text(text = "CSV")
                 }
-            )
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        SettingsSection(title = "О приложении") {
-            SettingsItem(
-                icon = Icons.Default.Info,
-                title = "О MoodDiary",
-                subtitle = "Версия 1.0.0",
-                onClick = {
-                    // TODO: Показать информацию о приложении
+                OutlinedButton(
+                    onClick = { /* TODO: Экспорт в JSON */ },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color.White
+                    ),
+                    border = ButtonDefaults.outlinedButtonBorder.copy(
+                        brush = androidx.compose.ui.graphics.SolidColor(Color.White.copy(alpha = 0.3f))
+                    )
+                ) {
+                    Text(text = "JSON")
                 }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        InfoCard()
-    }
-}
-
-@Composable
-fun SettingsSection(
-    title: String,
-    content: @Composable () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CardBackground),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
-
-            content()
+            }
         }
     }
 }
 
 @Composable
-fun SettingsItem(
-    icon: ImageVector,
-    title: String,
-    subtitle: String,
-    onClick: (() -> Unit)? = null,
-    trailing: @Composable (() -> Unit)? = null
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .then(
-                if (onClick != null) {
-                    Modifier.clickable { onClick() }
-                } else {
-                    Modifier
-                }
-            )
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
+fun AboutSettings() {
+    GlassCard(
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = SoftBlue,
-            modifier = Modifier.size(24.dp)
-        )
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Column(
-            modifier = Modifier.weight(1f)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface
+            Icon(
+                imageVector = Icons.Default.Info,
+                contentDescription = "О приложении",
+                tint = AccentYellow,
+                modifier = Modifier.size(24.dp)
             )
 
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-            )
-        }
+            Spacer(modifier = Modifier.width(16.dp))
 
-        trailing?.invoke()
-    }
-}
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "MoodDiary",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
 
-@Composable
-fun InfoCard() {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = LightLavender.copy(alpha = 0.3f)
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "💙",
-                style = MaterialTheme.typography.headlineLarge
-            )
+                Text(
+                    text = "Версия 1.0.0",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White.copy(alpha = 0.7f)
+                )
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = "MoodDiary",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = "Ваш персональный дневник настроения с поддержкой ИИ",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
+                Text(
+                    text = "Дневник настроения с AI-поддержкой для ежедневного отслеживания эмоций и самонаблюдения.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.8f),
+                    lineHeight = 16.sp
+                )
+            }
         }
     }
 }

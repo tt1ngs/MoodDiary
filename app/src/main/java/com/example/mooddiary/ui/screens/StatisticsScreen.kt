@@ -3,14 +3,12 @@ package com.example.mooddiary.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -18,7 +16,12 @@ import androidx.compose.ui.unit.sp
 import com.example.mooddiary.data.model.Mood
 import com.example.mooddiary.data.model.MoodEntry
 import com.example.mooddiary.ui.theme.*
-import kotlinx.datetime.LocalDate
+import com.example.mooddiary.ui.components.*
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.minus
 
 @Composable
 fun StatisticsScreen(
@@ -27,7 +30,8 @@ fun StatisticsScreen(
 ) {
     val scrollState = rememberScrollState()
 
-    val thirtyDaysAgo = LocalDate(2025, 1, 1)
+    val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+    val thirtyDaysAgo = today.minus(30, DateTimeUnit.DAY)
     val recentEntries = moodEntries.filter { entry ->
         entry.dateTime.date >= thirtyDaysAgo
     }
@@ -39,288 +43,242 @@ fun StatisticsScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .verticalScroll(scrollState)
-            .padding(16.dp)
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
+        // Заголовок
         Text(
-            text = "Статистика настроения",
-            style = MaterialTheme.typography.headlineMedium,
+            text = "Статистика",
+            style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "За последние 30 дней",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        OverallStatsCard(
-            totalEntries = recentEntries.size,
-            averageMood = calculateAverageMood(recentEntries)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        MoodDistributionCard(moodStats = moodStats)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        MoodBreakdownCard(moodStats = moodStats)
-    }
-}
-
-@Composable
-fun OverallStatsCard(
-    totalEntries: Int,
-    averageMood: Float
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CardBackground),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Общая статистика",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                StatItem(
-                    title = "Записей",
-                    value = totalEntries.toString(),
-                    color = SoftBlue
-                )
-
-                StatItem(
-                    title = "Среднее настроение",
-                    value = String.format("%.1f", averageMood),
-                    color = CalmingPurple
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun StatItem(
-    title: String,
-    value: String,
-    color: Color
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = value,
-            style = MaterialTheme.typography.headlineLarge,
-            fontWeight = FontWeight.Bold,
-            color = color,
+            modifier = Modifier.fillMaxWidth(),
             fontSize = 32.sp
         )
 
-        Text(
-            text = title,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+        // Общая статистика в виде карточек
+        ModernStatsOverview(
+            totalEntries = recentEntries.size,
+            averageMood = calculateAverageMood(recentEntries),
+            moodStats = moodStats
+        )
+
+        // Новый линейный график тренда настроения
+        MoodLineChart(
+            moodEntries = recentEntries.takeLast(14) // Последние 2 недели
+        )
+
+        // Новый столбчатый график распределения
+        MoodBarChart(
+            moodStats = moodStats
+        )
+
+        // Инсайты и тренды
+        MoodInsights(recentEntries = recentEntries, moodStats = moodStats)
+    }
+}
+
+@Composable
+fun ModernStatsOverview(
+    totalEntries: Int,
+    averageMood: Float,
+    moodStats: Map<Mood, Int>
+) {
+    val positiveCount = (moodStats[Mood.HAPPY] ?: 0) + (moodStats[Mood.VERY_HAPPY] ?: 0) + (moodStats[Mood.SLIGHTLY_HAPPY] ?: 0)
+    val negativeCount = (moodStats[Mood.SAD] ?: 0) + (moodStats[Mood.VERY_SAD] ?: 0) + (moodStats[Mood.SLIGHTLY_SAD] ?: 0)
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        // Карточка общих записей
+        ModernStatCard(
+            title = "Записей",
+            value = totalEntries.toString(),
+            subtitle = "за 30 дней",
+            color = AccentPurple,
+            modifier = Modifier.weight(1f)
+        )
+
+        // Карточка среднего настроения
+        ModernStatCard(
+            title = "Средний балл",
+            value = String.format("%.1f", averageMood),
+            subtitle = "из 7",
+            color = MoodHappy,
+            modifier = Modifier.weight(1f)
+        )
+    }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        // Позитивные дни
+        ModernStatCard(
+            title = "Хорошие дни",
+            value = positiveCount.toString(),
+            subtitle = "${if (totalEntries > 0) (positiveCount * 100 / totalEntries) else 0}%",
+            color = MoodVeryHappy,
+            modifier = Modifier.weight(1f)
+        )
+
+        // Негативные дни
+        ModernStatCard(
+            title = "Сложные дни",
+            value = negativeCount.toString(),
+            subtitle = "${if (totalEntries > 0) (negativeCount * 100 / totalEntries) else 0}%",
+            color = MoodVerySad,
+            modifier = Modifier.weight(1f)
         )
     }
 }
 
 @Composable
-fun MoodDistributionCard(moodStats: Map<Mood, Int>) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CardBackground),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
+fun ModernStatCard(
+    title: String,
+    value: String,
+    subtitle: String,
+    color: Color,
+    modifier: Modifier = Modifier
+) {
+    GlassCard(modifier = modifier) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Распределение настроений",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.fillMaxWidth(),
+                text = title,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.8f),
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            val totalEntries = moodStats.values.sum()
-            if (totalEntries > 0) {
-                Mood.entries.forEach { mood ->
-                    val count = moodStats[mood] ?: 0
-                    val percentage = (count.toFloat() / totalEntries * 100).toInt()
-
-                    MoodBar(
-                        mood = mood,
-                        count = count,
-                        percentage = percentage
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-            } else {
-                Text(
-                    text = "Нет данных для отображения",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun MoodBar(
-    mood: Mood,
-    count: Int,
-    percentage: Int
-) {
-    val moodColor = getMoodColor(mood)
-
-    Column {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = mood.emoji, fontSize = 20.sp)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(mood.labelRes),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "$count ($percentage%)",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(8.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = RoundedCornerShape(4.dp)
-                )
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(percentage / 100f)
-                    .fillMaxHeight()
-                    .background(
-                        color = moodColor,
-                        shape = RoundedCornerShape(4.dp)
-                    )
-            )
-        }
-    }
-}
-
-@Composable
-fun MoodBreakdownCard(moodStats: Map<Mood, Int>) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CardBackground),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(20.dp)
-        ) {
-            Text(
-                text = "Детальная статистика",
-                style = MaterialTheme.typography.titleLarge,
+                text = value,
+                style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                color = color,
+                fontSize = 36.sp,
+                textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            val positiveCount = (moodStats[Mood.HAPPY] ?: 0) + (moodStats[Mood.VERY_HAPPY] ?: 0) + (moodStats[Mood.SLIGHTLY_HAPPY] ?: 0)
-            val neutralCount = moodStats[Mood.NEUTRAL] ?: 0
-            val negativeCount = (moodStats[Mood.SAD] ?: 0) + (moodStats[Mood.VERY_SAD] ?: 0) + (moodStats[Mood.SLIGHTLY_SAD] ?: 0)
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                StatItem(
-                    title = "Позитивные",
-                    value = positiveCount.toString(),
-                    color = MoodHappy
-                )
-
-                StatItem(
-                    title = "Нейтральные",
-                    value = neutralCount.toString(),
-                    color = MoodNeutral
-                )
-
-                StatItem(
-                    title = "Негативные",
-                    value = negativeCount.toString(),
-                    color = MoodSad
-                )
-            }
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.White.copy(alpha = 0.6f),
+                textAlign = TextAlign.Center
+            )
         }
     }
+}
+
+@Composable
+fun MoodInsights(
+    recentEntries: List<MoodEntry>,
+    moodStats: Map<Mood, Int>
+) {
+    GlassCard(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = "Анализ и рекомендации",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            // Самое частое настроение
+            val mostFrequentMood = moodStats.maxByOrNull { it.value }?.key
+            if (mostFrequentMood != null) {
+                InsightItem(
+                    icon = "📊",
+                    text = "Чаще всего у вас было ${getMoodDescription(mostFrequentMood)} настроение"
+                )
+            }
+
+            // Тренд
+            if (recentEntries.size >= 7) {
+                val firstWeek = recentEntries.take(7).map { it.mood.value }.average()
+                val lastWeek = recentEntries.takeLast(7).map { it.mood.value }.average()
+                val trend = when {
+                    lastWeek > firstWeek + 0.5 -> "📈 Ваше настроение улучшается!"
+                    lastWeek < firstWeek - 0.5 -> "📉 Стоит обратить внимание на самочувствие"
+                    else -> "📊 Ваше настроение стабильно"
+                }
+                InsightItem(icon = "", text = trend)
+            }
+
+            // Рекомендация
+            val positivePercentage = moodStats.filter { it.key.value >= 5 }.values.sum() * 100 / recentEntries.size.coerceAtLeast(1)
+            val recommendation = when {
+                positivePercentage >= 70 -> "✨ Отлично! Продолжайте в том же духе"
+                positivePercentage >= 50 -> "🌱 Попробуйте добавить больше позитивных активностей"
+                else -> "🤗 Рассмотрите возможность поговорить с близкими или специалистом"
+            }
+            InsightItem(icon = "", text = recommendation)
+        }
+    }
+}
+
+@Composable
+private fun InsightItem(
+    icon: String,
+    text: String
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        if (icon.isNotEmpty()) {
+            Text(
+                text = icon,
+                fontSize = 20.sp
+            )
+        }
+        Text(
+            text = text,
+            color = Color.White.copy(alpha = 0.9f),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+private fun getMoodDescription(mood: Mood): String = when (mood) {
+    Mood.VERY_SAD -> "очень грустное"
+    Mood.SAD -> "грустное"
+    Mood.SLIGHTLY_SAD -> "слегка грустное"
+    Mood.NEUTRAL -> "нейтральное"
+    Mood.SLIGHTLY_HAPPY -> "слегка хорошее"
+    Mood.HAPPY -> "хорошее"
+    Mood.VERY_HAPPY -> "отличное"
 }
 
 private fun calculateMoodStatistics(entries: List<MoodEntry>): Map<Mood, Int> {
     return entries.groupBy { it.mood }
         .mapValues { it.value.size }
+        .toMutableMap()
+        .apply {
+            // Добавляем нулевые значения для отсутствующих настроений
+            Mood.entries.forEach { mood ->
+                if (!containsKey(mood)) {
+                    this[mood] = 0
+                }
+            }
+        }
 }
 
 private fun calculateAverageMood(entries: List<MoodEntry>): Float {
-    if (entries.isEmpty()) return 0f
-    return entries.map { it.mood.value }.average().toFloat()
-}
-
-private fun getMoodColor(mood: Mood): Color {
-    return when (mood) {
-        Mood.VERY_HAPPY -> MoodVeryHappy
-        Mood.HAPPY -> MoodHappy
-        Mood.SLIGHTLY_HAPPY -> MoodSlightlyHappy
-        Mood.NEUTRAL -> MoodNeutral
-        Mood.SLIGHTLY_SAD -> MoodSlightlySad
-        Mood.SAD -> MoodSad
-        Mood.VERY_SAD -> MoodVerySad
+    return if (entries.isNotEmpty()) {
+        entries.map { it.mood.value }.average().toFloat()
+    } else {
+        4f // Нейтральное значение
     }
 }

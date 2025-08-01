@@ -1,6 +1,8 @@
 package com.example.mooddiary.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,7 +16,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -118,17 +122,17 @@ fun MoodDisplayCard(moodEntry: MoodEntry) {
             .shadow(8.dp, RoundedCornerShape(20.dp)),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = CardBackground
+            containerColor = if (isSystemInDarkTheme()) CardBackgroundDark else CardBackgroundLight
         )
     ) {
         Column(
             modifier = Modifier.padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = moodEntry.mood.emoji,
-                fontSize = 72.sp,
-                modifier = Modifier.padding(16.dp)
+            Image(
+                imageVector = ImageVector.vectorResource(getMoodDrawable(moodEntry.mood)),
+                contentDescription = null,
+                modifier = Modifier.size(72.dp).padding(16.dp)
             )
 
             Text(
@@ -159,7 +163,7 @@ fun NoteDisplayCard(note: String) {
             .shadow(8.dp, RoundedCornerShape(16.dp)),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = CardBackground
+            containerColor = if (isSystemInDarkTheme()) CardBackgroundDark else CardBackgroundLight
         )
     ) {
         Column(
@@ -184,64 +188,6 @@ fun NoteDisplayCard(note: String) {
     }
 }
 
-@Composable
-fun AIAnalysisCard(sentimentScore: Float) {
-    val (analysisText, analysisColor) = when {
-        sentimentScore > 0.3f -> "Позитивное настроение! Отличный день!" to MoodHappy
-        sentimentScore < -0.3f -> "Негативное настроение. Попробуйте расслабиться." to MoodSad
-        else -> "Нейтральное настроение. Все в порядке." to MoodNeutral
-    }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(8.dp, RoundedCornerShape(16.dp)),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = analysisColor.copy(alpha = 0.1f)
-        )
-    ) {
-        Column(
-            modifier = Modifier.padding(20.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "🤖",
-                    fontSize = 24.sp
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Text(
-                    text = "AI Анализ",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = analysisText,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                lineHeight = 22.sp
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Оценка тональности: ${String.format("%.2f", sentimentScore)}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-            )
-        }
-    }
-}
-
 private fun formatDate(dateTime: LocalDateTime): String {
     val months = listOf(
         "января", "февраля", "марта", "апреля", "мая", "июня",
@@ -253,4 +199,14 @@ private fun formatDate(dateTime: LocalDateTime): String {
 
 private fun formatDateTime(dateTime: LocalDateTime): String {
     return "${formatDate(dateTime)} в ${String.format("%02d:%02d", dateTime.hour, dateTime.minute)}"
+}
+
+private fun getMoodDrawable(mood: com.example.mooddiary.data.model.Mood): Int = when (mood) {
+    com.example.mooddiary.data.model.Mood.VERY_SAD -> R.drawable.mood_very_sad
+    com.example.mooddiary.data.model.Mood.SAD -> R.drawable.mood_sad
+    com.example.mooddiary.data.model.Mood.SLIGHTLY_SAD -> R.drawable.mood_slightly_sad
+    com.example.mooddiary.data.model.Mood.NEUTRAL -> R.drawable.mood_neutral
+    com.example.mooddiary.data.model.Mood.SLIGHTLY_HAPPY -> R.drawable.mood_slightly_happy
+    com.example.mooddiary.data.model.Mood.HAPPY -> R.drawable.mood_happy
+    com.example.mooddiary.data.model.Mood.VERY_HAPPY -> R.drawable.mood_very_happy
 }

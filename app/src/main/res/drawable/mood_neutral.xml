@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- Квадратное лицо с закругленными углами -->
+    <path
+        android:fillColor="#6B7280"
+        android:pathData="M25,15 L95,15 C105.5,15 115,24.5 115,35 L115,85 C115,95.5 105.5,105 95,105 L25,105 C14.5,105 5,95.5 5,85 L5,35 C5,24.5 14.5,15 25,15 Z"/>
+
+    <!-- Тень для глубины -->
+    <path
+        android:fillColor="#4B5563"
+        android:pathData="M25,105 L95,105 C105.5,105 115,95.5 115,85 L115,95 C115,105.5 105.5,115 95,115 L25,115 C14.5,115 5,105.5 5,95 L5,85 C5,95.5 14.5,105 25,105 Z"/>
+
+    <!-- Современные глаза -->
+    <path
+        android:fillColor="#1F2937"
+        android:pathData="M30,45 L45,45 C47,45 47,55 45,55 L30,55 C28,55 28,45 30,45 Z"/>
+
+    <path
+        android:fillColor="#1F2937"
+        android:pathData="M75,45 L90,45 C92,45 92,55 90,55 L75,55 C73,55 73,45 75,45 Z"/>
+
+    <!-- Нейтральный рот -->
+    <path
+        android:fillColor="#1F2937"
+        android:pathData="M48,76 L72,76 C74,76 74,80 72,80 L48,80 C46,80 46,76 48,76 Z"/>
+
+    <!-- Нейтральные брови -->
+    <path
+        android:fillColor="#1F2937"
+        android:pathData="M30,35 L42,35 L42,40 L30,40 Z"/>
+
+    <path
+        android:fillColor="#1F2937"
+        android:pathData="M78,35 L90,35 L90,40 L78,40 Z"/>
+</vector>

@@ -17,36 +17,39 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80,
+    primary = AccentYellow,
+    secondary = TextGray,
+    tertiary = MoodHappy,
     background = BackgroundDark,
     surface = SurfaceDark,
-    onPrimary = Purple40,
-    onSecondary = PurpleGrey40,
-    onTertiary = Pink40,
-    onBackground = Color.White,
-    onSurface = Color.White,
+    onPrimary = Black,
+    onSecondary = White,
+    onTertiary = Black,
+    onBackground = White,
+    onSurface = White,
+    surfaceVariant = MediumGray,
+    onSurfaceVariant = TextGray
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40,
+    primary = SoftBlue,
+    secondary = MediumGray,
+    tertiary = CalmingPurple,
     background = BackgroundLight,
     surface = SurfaceLight,
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Purple40,
-    onSurface = Purple40,
+    onPrimary = White,
+    onSecondary = White,
+    onTertiary = White,
+    onBackground = Color(0xFF1A1A1A), // Темно-серый для лучшей читаемости
+    onSurface = Color(0xFF2A2A2A), // Темно-серый для текста на поверхности
+    surfaceVariant = LightLavender,
+    onSurfaceVariant = Color(0xFF4A4A4A) // Серый для вторичного текста
 )
 
 @Composable
 fun MoodDiaryTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false, // Отключаем динамические цвета для стабильности темы
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -54,16 +57,16 @@ fun MoodDiaryTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = colorScheme.background.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 

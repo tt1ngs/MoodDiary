@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- Квадратное лицо с закругленными углами -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M25,15 L95,15 C105.5,15 115,24.5 115,35 L115,85 C115,95.5 105.5,105 95,105 L25,105 C14.5,105 5,95.5 5,85 L5,35 C5,24.5 14.5,15 25,15 Z"/>
+
+    <!-- Тень для глубины -->
+    <path
+        android:fillColor="#059669"
+        android:pathData="M25,105 L95,105 C105.5,105 115,95.5 115,85 L115,95 C115,105.5 105.5,115 95,115 L25,115 C14.5,115 5,105.5 5,95 L5,85 C5,95.5 14.5,105 25,105 Z"/>
+
+    <!-- Очень счастливые глаза (закрытые от радости) -->
+    <path
+        android:strokeColor="#1F2937"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M25,45 Q37.5,52 50,45"/>
+
+    <path
+        android:strokeColor="#1F2937"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M70,45 Q82.5,52 95,45"/>
+
+    <!-- Очень счастливый рот -->
+    <path
+        android:strokeColor="#1F2937"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M35,70 Q60,95 85,70"/>
+
+    <!-- Зубы -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M45,78 Q60,88 75,78 Q60,85 45,78 Z"/>
+
+    <!-- Очень приподнятые брови -->
+    <path
+        android:fillColor="#1F2937"
+        android:pathData="M22,42 L42,25 L44,30 L24,47 Z"/>
+
+    <path
+        android:fillColor="#1F2937"
+        android:pathData="M76,30 L96,25 L98,30 L78,47 Z"/>
+
+    <!-- Яркий румянец -->
+    <path
+        android:fillColor="#EC4899"
+        android:pathData="M18,62 C18,56.5 13.5,52 8,52 C2.5,52 -2,56.5 -2,62 C-2,67.5 2.5,72 8,72 C13.5,72 18,67.5 18,62 Z"/>
+
+    <path
+        android:fillColor="#EC4899"
+        android:pathData="M122,62 C122,56.5 117.5,52 112,52 C106.5,52 102,56.5 102,62 C102,67.5 106.5,72 112,72 C117.5,72 122,67.5 122,62 Z"/>
+
+    <!-- Звездочки радости -->
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M15,25 L17,30 L22,30 L18,33 L20,38 L15,35 L10,38 L12,33 L8,30 L13,30 Z"/>
+
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M105,25 L107,30 L112,30 L108,33 L110,38 L105,35 L100,38 L102,33 L98,30 L103,30 Z"/>
+</vector>

@@ -38,6 +38,7 @@ class MoodDiaryViewModel @Inject constructor(
             try {
                 val currentDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
                 val sentimentScore = analyzeSentiment(note)
+                val aiRecommendation = generateAIRecommendation(mood, sentimentScore, note)
 
                 val entry = MoodEntry(
                     mood = mood,
@@ -49,7 +50,8 @@ class MoodDiaryViewModel @Inject constructor(
                 moodRepository.insertEntry(entry)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    message = "Запись сохранена!"
+                    message = "Запись сохранена!",
+                    aiRecommendation = aiRecommendation
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
@@ -104,37 +106,96 @@ class MoodDiaryViewModel @Inject constructor(
         }
     }
 
-    // Простой анализ тональности текста
+    // Улучшенный анализ тональности текста
     private fun analyzeSentiment(text: String): Float {
         if (text.isBlank()) return 0f
 
         val positiveWords = listOf(
             "хорошо", "отлично", "замечательно", "прекрасно", "счастлив", "радость",
-            "весело", "удача", "успех", "любовь", "позитив", "классно", "супер"
+            "весело", "удача", "успех", "любовь", "позитив", "классно", "супер",
+            "восторг", "блаженство", "вдохновение", "энергия", "мотивация"
         )
 
         val negativeWords = listOf(
             "плохо", "ужасно", "грустно", "депрессия", "злость", "боль", "проблема",
-            "стресс", "тревога", "печаль", "усталость", "разочарование", "беда"
+            "стресс", "тревога", "печаль", "усталость", "разочарование", "беда",
+            "паника", "страх", "одиночество", "отчаяние", "безнадежность"
         )
 
         val words = text.lowercase().split(" ", ",", ".", "!", "?", ";", ":")
         var score = 0f
+        var wordCount = 0
 
         words.forEach { word ->
             when {
-                positiveWords.any { word.contains(it) } -> score += 0.1f
-                negativeWords.any { word.contains(it) } -> score -= 0.1f
+                positiveWords.any { word.contains(it) } -> {
+                    score += 0.2f
+                    wordCount++
+                }
+                negativeWords.any { word.contains(it) } -> {
+                    score -= 0.2f
+                    wordCount++
+                }
             }
         }
 
-        return score.coerceIn(-1f, 1f)
+        // Нормализация относительно количества эмоциональных слов
+        return if (wordCount > 0) {
+            (score / wordCount).coerceIn(-1f, 1f)
+        } else {
+            0f
+        }
+    }
+
+    // Генерация AI-рекомендаций
+    private fun generateAIRecommendation(mood: Mood, sentimentScore: Float?, note: String): String {
+        return when {
+            mood == Mood.VERY_SAD || mood == Mood.SAD -> {
+                when {
+                    sentimentScore != null && sentimentScore < -0.5f ->
+                        "Замечен сильный негатив в записи. Попробуйте глубокое дыхание или прогулку на свежем воздухе. Помните: это временно."
+                    note.contains("стресс", ignoreCase = true) ->
+                        "Стресс может сильно влиять на настроение. Рассмотрите техники релаксации или медитацию."
+                    note.contains("устал", ignoreCase = true) ->
+                        "Усталость влияет на эмоции. Позаботьтесь о качественном сне и отдыхе."
+                    else ->
+                        "Грустные дни случаются с каждым. Попробуйте заняться любимым делом или связаться с близкими."
+                }
+            }
+            mood == Mood.SLIGHTLY_SAD -> {
+                "Легкая грусть - это нормально. Попробуйте послушать музыку или сделать что-то приятное для себя."
+            }
+            mood == Mood.NEUTRAL -> {
+                "Нейтральное настроение - хорошая база для планирования дня. Возможно, стоит добавить что-то вдохновляющее?"
+            }
+            mood == Mood.SLIGHTLY_HAPPY || mood == Mood.HAPPY -> {
+                when {
+                    sentimentScore != null && sentimentScore > 0.3f ->
+                        "Отличное настроение! Попробуйте поделиться позитивом с окружающими."
+                    note.contains("успех", ignoreCase = true) ->
+                        "Поздравляем с успехом! Не забывайте отмечать свои достижения."
+                    else ->
+                        "Хорошее настроение - отличная возможность для новых начинаний!"
+                }
+            }
+            mood == Mood.VERY_HAPPY -> {
+                "Потрясающее настроение! Запомните этот момент и то, что к нему привело. Поделитесь радостью с близкими!"
+            }
+            else -> "Спасибо за запись! Продолжайте отслеживать свое настроение для лучшего понимания себя."
+        }
     }
 
     fun clearMessage() {
         _uiState.value = _uiState.value.copy(
             message = null,
-            error = null
+            error = null,
+            aiRecommendation = null
+        )
+    }
+
+    fun dismissAIRecommendation() {
+        _uiState.value = _uiState.value.copy(
+            aiRecommendation = null
         )
     }
 }
@@ -143,5 +204,6 @@ data class MoodDiaryUiState(
     val isLoading: Boolean = false,
     val todayEntry: MoodEntry? = null,
     val message: String? = null,
-    val error: String? = null
+    val error: String? = null,
+    val aiRecommendation: String? = null
 )

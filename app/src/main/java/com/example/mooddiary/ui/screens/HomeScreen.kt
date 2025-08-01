@@ -1,19 +1,17 @@
 package com.example.mooddiary.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -21,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mooddiary.R
 import com.example.mooddiary.data.model.Mood
+import com.example.mooddiary.ui.components.*
 import com.example.mooddiary.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,62 +32,74 @@ fun HomeScreen(
     var noteText by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
 
-    Column(
+    // Получаем ViewModel для доступа к uiState
+    val viewModel: com.example.mooddiary.ui.viewmodel.MoodDiaryViewModel = androidx.hilt.navigation.compose.hiltViewModel()
+    val uiState by viewModel.uiState.collectAsState()
+
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(scrollState)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text(
-            text = stringResource(R.string.home_title),
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = stringResource(R.string.home_subtitle),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        MoodSelector(
+        // Фоновый эффект
+        AnimatedBackground(
             selectedMood = selectedMood,
-            onMoodSelected = { selectedMood = it }
+            modifier = Modifier.fillMaxSize()
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Card(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .shadow(8.dp, RoundedCornerShape(16.dp)),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = CardBackground
-            )
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
+            Spacer(modifier = Modifier.height(40.dp))
+
+            // Заголовок
+            Text(
+                text = stringResource(R.string.home_title),
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                fontSize = 32.sp
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(R.string.home_subtitle),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                textAlign = TextAlign.Center,
+                fontSize = 16.sp
+            )
+
+            Spacer(modifier = Modifier.height(48.dp))
+
+            // Карусельный селектор настроения
+            CarouselMoodSelector(
+                selectedMood = selectedMood,
+                onMoodSelected = { selectedMood = it },
+                modifier = Modifier.height(160.dp)
+            )
+
+            Spacer(modifier = Modifier.height(48.dp))
+
+            // Стеклянная карточка для заметки
+            GlassCard(
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     text = stringResource(R.string.note_title),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    fontSize = 20.sp
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 OutlinedTextField(
                     value = noteText,
@@ -96,124 +107,152 @@ fun HomeScreen(
                     placeholder = {
                         Text(
                             stringResource(R.string.note_placeholder),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            color = Color.White.copy(alpha = 0.6f)
                         )
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(120.dp),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(16.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = SoftBlue,
-                        unfocusedBorderColor = LightLavender
+                        focusedBorderColor = AccentYellow,
+                        unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        cursorColor = AccentYellow
+                    ),
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(
+                        color = Color.White
                     )
                 )
             }
-        }
 
-        Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
-        Button(
-            onClick = {
-                selectedMood?.let { mood ->
-                    onSaveMoodEntry(mood, noteText)
-                    selectedMood = null
-                    noteText = ""
-                }
-            },
-            enabled = selectedMood != null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape = RoundedCornerShape(28.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = SoftBlue,
-                disabledContainerColor = LightLavender
-            )
-        ) {
-            Text(
-                text = stringResource(R.string.save_entry),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-    }
-}
-
-@Composable
-fun MoodSelector(
-    selectedMood: Mood?,
-    onMoodSelected: (Mood) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    LazyRow(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        contentPadding = PaddingValues(horizontal = 8.dp)
-    ) {
-        items(Mood.entries.size) { index ->
-            val mood = Mood.entries[index]
-            MoodButton(
-                mood = mood,
-                isSelected = selectedMood == mood,
-                onClick = { onMoodSelected(mood) }
-            )
-        }
-    }
-}
-
-@Composable
-fun MoodButton(
-    mood: Mood,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val backgroundColor = when (mood) {
-        Mood.VERY_HAPPY -> MoodVeryHappy
-        Mood.HAPPY -> MoodHappy
-        Mood.SLIGHTLY_HAPPY -> MoodSlightlyHappy
-        Mood.NEUTRAL -> MoodNeutral
-        Mood.SLIGHTLY_SAD -> MoodSlightlySad
-        Mood.SAD -> MoodSad
-        Mood.VERY_SAD -> MoodVerySad
-    }
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .clickable { onClick() }
-            .padding(4.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(if (isSelected) 72.dp else 64.dp)
-                .clip(CircleShape)
-                .background(
-                    if (isSelected) backgroundColor else backgroundColor.copy(alpha = 0.7f)
+            // Пульсирующая кнопка сохранения
+            PulsingButton(
+                onClick = {
+                    selectedMood?.let { mood ->
+                        onSaveMoodEntry(mood, noteText)
+                        selectedMood = null
+                        noteText = ""
+                    }
+                },
+                enabled = selectedMood != null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.save_entry),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    fontSize = 18.sp
                 )
-                .shadow(
-                    if (isSelected) 8.dp else 4.dp,
-                    CircleShape
-                ),
-            contentAlignment = Alignment.Center
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Показать выбранное настроение
+            selectedMood?.let { mood ->
+                MoodPreview(mood = mood)
+            }
+
+            // AI рекомендации
+            uiState.aiRecommendation?.let { recommendation ->
+                Spacer(modifier = Modifier.height(16.dp))
+                AIRecommendationCard(
+                    recommendation = recommendation,
+                    onDismiss = { viewModel.dismissAIRecommendation() }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+    }
+}
+
+@Composable
+fun MoodPreview(
+    mood: Mood,
+    modifier: Modifier = Modifier
+) {
+    GlassCard(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 text = mood.emoji,
-                fontSize = if (isSelected) 28.sp else 24.sp
+                fontSize = 32.sp
             )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column {
+                Text(
+                    text = "Выбранное настроение",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White.copy(alpha = 0.8f)
+                )
+
+                Text(
+                    text = stringResource(mood.labelRes),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
         }
+    }
+}
 
-        Spacer(modifier = Modifier.height(8.dp))
+@Composable
+fun AIRecommendationCard(
+    recommendation: String,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    GlassCard(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
+        ) {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = "🤖 AI Рекомендация",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = AccentYellow
+                )
 
-        Text(
-            text = stringResource(mood.labelRes),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-            textAlign = TextAlign.Center,
-            fontSize = 10.sp
-        )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = recommendation,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White.copy(alpha = 0.9f),
+                    lineHeight = 20.sp
+                )
+            }
+
+            TextButton(
+                onClick = onDismiss,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = Color.White.copy(alpha = 0.6f)
+                )
+            ) {
+                Text("✕", fontSize = 16.sp)
+            }
+        }
     }
 }

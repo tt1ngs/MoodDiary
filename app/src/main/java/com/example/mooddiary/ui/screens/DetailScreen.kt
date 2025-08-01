@@ -1,6 +1,7 @@
 package com.example.mooddiary.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -118,7 +119,7 @@ fun MoodDisplayCard(moodEntry: MoodEntry) {
             .shadow(8.dp, RoundedCornerShape(20.dp)),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = CardBackground
+            containerColor = if (isSystemInDarkTheme()) CardBackgroundDark else CardBackgroundLight
         )
     ) {
         Column(
@@ -159,7 +160,7 @@ fun NoteDisplayCard(note: String) {
             .shadow(8.dp, RoundedCornerShape(16.dp)),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = CardBackground
+            containerColor = if (isSystemInDarkTheme()) CardBackgroundDark else CardBackgroundLight
         )
     ) {
         Column(
@@ -179,64 +180,6 @@ fun NoteDisplayCard(note: String) {
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 lineHeight = 24.sp
-            )
-        }
-    }
-}
-
-@Composable
-fun AIAnalysisCard(sentimentScore: Float) {
-    val (analysisText, analysisColor) = when {
-        sentimentScore > 0.3f -> "Позитивное настроение! Отличный день!" to MoodHappy
-        sentimentScore < -0.3f -> "Негативное настроение. Попробуйте расслабиться." to MoodSad
-        else -> "Нейтральное настроение. Все в порядке." to MoodNeutral
-    }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(8.dp, RoundedCornerShape(16.dp)),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = analysisColor.copy(alpha = 0.1f)
-        )
-    ) {
-        Column(
-            modifier = Modifier.padding(20.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "🤖",
-                    fontSize = 24.sp
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Text(
-                    text = "AI Анализ",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = analysisText,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                lineHeight = 22.sp
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Оценка тональности: ${String.format("%.2f", sentimentScore)}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
         }
     }

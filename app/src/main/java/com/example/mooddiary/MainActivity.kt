@@ -14,6 +14,8 @@ import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -25,6 +27,7 @@ import com.example.mooddiary.ui.navigation.Screen
 import com.example.mooddiary.ui.screens.*
 import com.example.mooddiary.ui.theme.MoodDiaryTheme
 import com.example.mooddiary.ui.viewmodel.MoodDiaryViewModel
+import com.example.mooddiary.ui.theme.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -59,8 +62,12 @@ fun MoodDiaryApp() {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surface,
+                tonalElevation = 8.dp
+            ) {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
 
@@ -73,8 +80,15 @@ fun MoodDiaryApp() {
 
                 items.forEach { item ->
                     NavigationBarItem(
-                        icon = { Icon(item.icon, contentDescription = item.title) },
-                        label = { Text(item.title) },
+                        icon = {
+                            Icon(
+                                item.icon,
+                                contentDescription = item.title,
+                                tint = if (currentDestination?.hierarchy?.any { it.route == item.screen.route } == true)
+                                    AccentPurple else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
+                        },
+                        label = null, // Убираем текст
                         selected = currentDestination?.hierarchy?.any { it.route == item.screen.route } == true,
                         onClick = {
                             navController.navigate(item.screen.route) {
@@ -84,7 +98,14 @@ fun MoodDiaryApp() {
                                 launchSingleTop = true
                                 restoreState = true
                             }
-                        }
+                        },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = AccentPurple,
+                            selectedTextColor = AccentPurple,
+                            indicatorColor = AccentPurple.copy(alpha = 0.2f),
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
                     )
                 }
             }
@@ -107,6 +128,9 @@ fun MoodDiaryApp() {
                 CalendarScreen(
                     moodEntries = allEntries,
                     onDateSelected = { date ->
+                        navController.navigate(
+                            Screen.DayDetail.createRoute(date.year, date.monthNumber, date.dayOfMonth)
+                        )
                     }
                 )
             }
@@ -119,6 +143,21 @@ fun MoodDiaryApp() {
 
             composable(Screen.Settings.route) {
                 SettingsScreen()
+            }
+
+            composable(Screen.DayDetail.route) { backStackEntry ->
+                val year = backStackEntry.arguments?.getString("year")?.toIntOrNull() ?: 2024
+                val month = backStackEntry.arguments?.getString("month")?.toIntOrNull() ?: 1
+                val day = backStackEntry.arguments?.getString("day")?.toIntOrNull() ?: 1
+
+                val date = kotlinx.datetime.LocalDate(year, month, day)
+                val dayEntry = allEntries.find { it.dateTime.date == date }
+
+                DayDetailScreen(
+                    date = date,
+                    moodEntry = dayEntry,
+                    onBackClick = { navController.popBackStack() }
+                )
             }
 
             composable(Screen.Detail.route) { backStackEntry ->
@@ -134,6 +173,19 @@ fun MoodDiaryApp() {
                         navController.popBackStack()
                     }
                 )
+            }
+        }
+
+        // Показать сообщения
+        uiState.message?.let { message ->
+            LaunchedEffect(message) {
+                // TODO: Показать Snackbar с сообщением
+            }
+        }
+
+        uiState.error?.let { error ->
+            LaunchedEffect(error) {
+                // TODO: Показать Snackbar с ошибкой
             }
         }
     }

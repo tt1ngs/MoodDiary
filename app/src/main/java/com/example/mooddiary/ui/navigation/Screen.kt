@@ -8,4 +8,7 @@ sealed class Screen(val route: String) {
     object Detail : Screen("detail/{entryId}") {
         fun createRoute(entryId: Long) = "detail/$entryId"
     }
+    object DayDetail : Screen("day_detail/{year}/{month}/{day}") {
+        fun createRoute(year: Int, month: Int, day: Int) = "day_detail/$year/$month/$day"
+    }
 }

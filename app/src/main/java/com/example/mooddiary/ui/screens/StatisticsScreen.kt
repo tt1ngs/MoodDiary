@@ -46,7 +46,6 @@ fun StatisticsScreen(
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        // Заголовок
         Text(
             text = "Статистика",
             style = MaterialTheme.typography.headlineLarge,
@@ -56,25 +55,20 @@ fun StatisticsScreen(
             modifier = Modifier.fillMaxWidth(),
             fontSize = 32.sp
         )
-
-        // Общая статистика в виде карточек
         ModernStatsOverview(
             totalEntries = recentEntries.size,
             averageMood = calculateAverageMood(recentEntries),
             moodStats = moodStats
         )
 
-        // Новый линейный график тренда настроения
         MoodLineChart(
-            moodEntries = recentEntries.takeLast(14) // Последние 2 недели
+            moodEntries = recentEntries.takeLast(14) 
         )
 
-        // Новый столбчатый график распределения
         MoodBarChart(
             moodStats = moodStats
         )
 
-        // Инсайты и тренды
         MoodInsights(recentEntries = recentEntries, moodStats = moodStats)
     }
 }
@@ -92,7 +86,6 @@ fun ModernStatsOverview(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Карточка общих записей
         ModernStatCard(
             title = "Записей",
             value = totalEntries.toString(),
@@ -101,7 +94,6 @@ fun ModernStatsOverview(
             modifier = Modifier.weight(1f)
         )
 
-        // Карточка среднего настроения
         ModernStatCard(
             title = "Средний балл",
             value = String.format("%.1f", averageMood),
@@ -115,7 +107,6 @@ fun ModernStatsOverview(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Позитивные дни
         ModernStatCard(
             title = "Хорошие дни",
             value = positiveCount.toString(),
@@ -123,8 +114,6 @@ fun ModernStatsOverview(
             color = MoodVeryHappy,
             modifier = Modifier.weight(1f)
         )
-
-        // Негативные дни
         ModernStatCard(
             title = "Сложные дни",
             value = negativeCount.toString(),
@@ -194,7 +183,6 @@ fun MoodInsights(
         Spacer(modifier = Modifier.height(16.dp))
 
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            // Самое частое настроение
             val mostFrequentMood = moodStats.maxByOrNull { it.value }?.key
             if (mostFrequentMood != null) {
                 InsightItem(
@@ -203,7 +191,6 @@ fun MoodInsights(
                 )
             }
 
-            // Тренд
             if (recentEntries.size >= 7) {
                 val firstWeek = recentEntries.take(7).map { it.mood.value }.average()
                 val lastWeek = recentEntries.takeLast(7).map { it.mood.value }.average()
@@ -215,7 +202,6 @@ fun MoodInsights(
                 InsightItem(icon = "", text = trend)
             }
 
-            // Рекомендация
             val positivePercentage = moodStats.filter { it.key.value >= 5 }.values.sum() * 100 / recentEntries.size.coerceAtLeast(1)
             val recommendation = when {
                 positivePercentage >= 70 -> "✨ Отлично! Продолжайте в том же духе"
@@ -266,7 +252,6 @@ private fun calculateMoodStatistics(entries: List<MoodEntry>): Map<Mood, Int> {
         .mapValues { it.value.size }
         .toMutableMap()
         .apply {
-            // Добавляем нулевые значения для отсутствующих настроений
             Mood.entries.forEach { mood ->
                 if (!containsKey(mood)) {
                     this[mood] = 0
@@ -279,6 +264,6 @@ private fun calculateAverageMood(entries: List<MoodEntry>): Float {
     return if (entries.isNotEmpty()) {
         entries.map { it.mood.value }.average().toFloat()
     } else {
-        4f // Нейтральное значение
+        4f 
     }
 }

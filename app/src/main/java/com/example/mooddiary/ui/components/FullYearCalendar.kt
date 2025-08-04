@@ -55,14 +55,12 @@ fun FullYearCalendar(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Календарная сетка с полными месяцами
         LazyVerticalGrid(
             columns = GridCells.Fixed(12),
             verticalArrangement = Arrangement.spacedBy(2.dp),
             horizontalArrangement = Arrangement.spacedBy(2.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Заголовки месяцев
             val monthNames = listOf("Я", "Ф", "М", "А", "М", "И", "И", "А", "С", "О", "Н", "Д")
             items(monthNames) { month ->
                 Text(
@@ -75,7 +73,6 @@ fun FullYearCalendar(
                 )
             }
 
-            // Создаем grid для всех дней года (53 недели × 12 месяцев)
             items(53 * 12) { index ->
                 val month = (index % 12) + 1
                 val weekInYear = index / 12
@@ -104,7 +101,6 @@ fun FullYearCalendar(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Легенда
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -193,7 +189,6 @@ fun CalendarViewToggle(
             .padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        // Месячный вид
         ToggleButton(
             text = "Месяц",
             icon = Icons.Default.DateRange,
@@ -201,7 +196,6 @@ fun CalendarViewToggle(
             onClick = { onToggle(false) }
         )
 
-        // Годовой вид
         ToggleButton(
             text = "Год",
             icon = Icons.Default.ViewComfy,

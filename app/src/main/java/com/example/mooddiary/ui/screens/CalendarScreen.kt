@@ -59,7 +59,6 @@ fun CalendarScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // Переключатель между месячным и годовым видом
             CalendarViewToggle(
                 isYearView = isYearView,
                 onToggle = { isYearView = it },
@@ -69,13 +68,11 @@ fun CalendarScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             if (isYearView) {
-                // Годовой календарь
                 FullYearCalendar(
                     moodEntries = moodEntries,
                     year = today.year
                 )
             } else {
-                // Месячный календарь
                 CalendarHeader(
                     currentMonth = currentMonth,
                     onPreviousMonth = {
@@ -194,11 +191,9 @@ fun CalendarGrid(
 ) {
     val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
 
-    // Вычисляем первый день месяца и его день недели
     val firstDayOfMonth = LocalDate(currentMonth.year, currentMonth.monthNumber, 1)
     val firstDayOfWeek = (firstDayOfMonth.dayOfWeek.ordinal + 1) % 7 // Понедельник = 0
 
-    // Количество дней в месяце
     val daysInMonth = when (currentMonth.monthNumber) {
         1, 3, 5, 7, 8, 10, 12 -> 31
         4, 6, 9, 11 -> 30
@@ -212,12 +207,10 @@ fun CalendarGrid(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        // Пустые ячейки для выравнивания первого дня месяца
         items(firstDayOfWeek) {
             Box(modifier = Modifier.size(40.dp))
         }
 
-        // Дни месяца
         items(daysInMonth) { dayIndex ->
             val day = dayIndex + 1
             val date = LocalDate(currentMonth.year, currentMonth.monthNumber, day)
@@ -253,7 +246,6 @@ fun CalendarDay(
         contentAlignment = Alignment.Center
     ) {
         if (moodEntry != null) {
-            // Показываем только эмоцию без фона
             Image(
                 imageVector = ImageVector.vectorResource(getMoodDrawable(moodEntry.mood)),
                 contentDescription = null,
@@ -299,7 +291,6 @@ fun MoodLegend() {
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.weight(1f)
                         ) {
-                            // Убираем фон, показываем только чистую эмоцию
                             Image(
                                 imageVector = ImageVector.vectorResource(getMoodDrawable(mood)),
                                 contentDescription = null,

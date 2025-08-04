@@ -40,16 +40,16 @@ private val LightColorScheme = lightColorScheme(
     onPrimary = White,
     onSecondary = White,
     onTertiary = White,
-    onBackground = Color(0xFF1A1A1A), // Темно-серый для лучшей читаемости
-    onSurface = Color(0xFF2A2A2A), // Темно-серый для текста на поверхности
+    onBackground = Color(0xFF1A1A1A), 
+    onSurface = Color(0xFF2A2A2A), 
     surfaceVariant = LightLavender,
-    onSurfaceVariant = Color(0xFF4A4A4A) // Серый для вторичного текста
+    onSurfaceVariant = Color(0xFF4A4A4A)
 )
 
 @Composable
 fun MoodDiaryTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false, // Отключаем динамические цвета для стабильности темы
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

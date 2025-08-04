@@ -36,16 +36,13 @@ fun CarouselMoodSelector(
     val density = LocalDensity.current
     val radiusPx = with(density) { 120.dp.toPx() }
 
-    // Состояние для анимации раскрытия
     var isExpanded by remember { mutableStateOf(false) }
 
-    // Запускаем анимацию раскрытия при первом показе
     LaunchedEffect(Unit) {
-        kotlinx.coroutines.delay(300) // Небольшая задержка для плавности
+        kotlinx.coroutines.delay(300) 
         isExpanded = true
     }
 
-    // Анимация раскрытия из точки
     val expandScale by animateFloatAsState(
         targetValue = if (isExpanded) 1f else 0f,
         animationSpec = spring(
@@ -55,10 +52,8 @@ fun CarouselMoodSelector(
         label = "expand_scale"
     )
 
-    // Находим индекс выбранного настроения или используем центральный
     val selectedIndex = selectedMood?.let { moods.indexOf(it) } ?: (moods.size / 2)
 
-    // Целевой поворот для центрирования выбранного элемента
     val targetRotation = -selectedIndex * (360f / moods.size)
 
     val rotation by animateFloatAsState(
@@ -70,7 +65,6 @@ fun CarouselMoodSelector(
         label = "carousel_rotation"
     )
 
-    // Тонкое свечение - адаптированное к цветовой схеме
     val infiniteTransition = rememberInfiniteTransition(label = "subtle_effects")
     val subtleGlow by infiniteTransition.animateFloat(
         initialValue = 0.1f,
@@ -82,7 +76,6 @@ fun CarouselMoodSelector(
         label = "subtle_glow"
     )
 
-    // Пульсация для выбранного элемента (очень тонкая)
     val selectedPulse by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = 1.05f,
@@ -97,7 +90,6 @@ fun CarouselMoodSelector(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
-        // Очень тонкое центральное свечение, адаптированное к теме
         if (selectedMood != null) {
             Box(
                 modifier = Modifier
@@ -105,7 +97,7 @@ fun CarouselMoodSelector(
                     .graphicsLayer {
                         scaleX = expandScale
                         scaleY = expandScale
-                        alpha = subtleGlow * 0.6f // Очень тонкое
+                        alpha = subtleGlow * 0.6f
                     }
                     .background(
                         brush = Brush.radialGradient(
@@ -120,7 +112,6 @@ fun CarouselMoodSelector(
             )
         }
 
-        // 3D Карусель эмоций с анимацией раскрытия
         Box(
             modifier = Modifier
                 .size(280.dp)
@@ -141,7 +132,6 @@ fun CarouselMoodSelector(
                     minOf(it, moods.size - it)
                 }
 
-                // Эффект глубины - более плавный переход
                 val depthScale = when (distance) {
                     0 -> if (isSelected) selectedPulse else 1f
                     1 -> 0.85f
@@ -159,7 +149,7 @@ fun CarouselMoodSelector(
                 MoodItem(
                     mood = mood,
                     isSelected = isSelected,
-                    isCentered = distance == 0, // Элемент в центре
+                    isCentered = distance == 0,
                     scale = depthScale,
                     alpha = depthAlpha,
                     modifier = Modifier
@@ -168,7 +158,6 @@ fun CarouselMoodSelector(
                             y = with(density) { y.toDp() }
                         )
                         .graphicsLayer {
-                            // Компенсируем поворот карусели для элементов
                             rotationZ = -rotation
                         }
                         .clickable(
@@ -181,7 +170,6 @@ fun CarouselMoodSelector(
             }
         }
 
-        // Центральная точка - более тонкая
         if (selectedMood == null && isExpanded) {
             Box(
                 modifier = Modifier
@@ -244,7 +232,6 @@ private fun MoodItem(
             },
         contentAlignment = Alignment.Center
     ) {
-        // Очень тонкий фоновый круг для центрированного элемента
         if (isCentered) {
             Box(
                 modifier = Modifier
@@ -262,7 +249,6 @@ private fun MoodItem(
             )
         }
 
-        // Векторное изображение эмоции
         Image(
             imageVector = ImageVector.vectorResource(getMoodDrawable(mood)),
             contentDescription = null,
@@ -275,7 +261,6 @@ private fun MoodItem(
             )
         )
 
-        // Очень тонкое кольцо выделения для выбранного элемента
         if (isCentered && isSelected) {
             Box(
                 modifier = Modifier
@@ -309,7 +294,6 @@ private fun getMoodDrawable(mood: Mood): Int = when (mood) {
     Mood.VERY_HAPPY -> R.drawable.mood_very_happy
 }
 
-// Адаптированные цвета под цветовую схему приложения
 private fun getAdaptedMoodColor(mood: Mood): Color = when (mood) {
     Mood.VERY_SAD -> MoodVerySad
     Mood.SAD -> MoodSad

@@ -12,7 +12,7 @@ data class MoodEntry(
     val mood: Mood,
     val note: String = "",
     val dateTime: LocalDateTime,
-    val sentimentScore: Float? = null // AI анализ: -1.0 (негативный) до 1.0 (позитивный)
+    val sentimentScore: Float? = null // -1.0 (негативный) до 1.0 (позитивный)
 )
 
 enum class Mood(val emoji: String, val labelRes: Int, val value: Int) {

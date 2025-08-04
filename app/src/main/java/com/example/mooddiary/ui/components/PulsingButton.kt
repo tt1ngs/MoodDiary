@@ -26,7 +26,6 @@ fun PulsingButton(
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "glass_button_effects")
 
-    // Пульсация
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = 1.02f,
@@ -36,8 +35,7 @@ fun PulsingButton(
         ),
         label = "button_scale"
     )
-
-    // Эффект свечения
+    
     val glowAlpha by infiniteTransition.animateFloat(
         initialValue = 0.3f,
         targetValue = 0.6f,
@@ -48,7 +46,6 @@ fun PulsingButton(
         label = "glow_alpha"
     )
 
-    // Эффект сдвига градиента
     val gradientOffset by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
@@ -63,7 +60,6 @@ fun PulsingButton(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        // Внешнее свечение
         Box(
             modifier = Modifier
                 .size(width = 200.dp, height = 60.dp)
@@ -80,10 +76,9 @@ fun PulsingButton(
                 )
         )
 
-        // Основная стеклянная кнопка
         Box(
             modifier = Modifier
-                .size(width = 220.dp, height = 56.dp) // Увеличиваем размер кнопки
+                .size(width = 220.dp, height = 56.dp)
                 .scale(if (enabled) scale else 1f)
                 .clip(RoundedCornerShape(28.dp))
                 .background(
@@ -108,7 +103,6 @@ fun PulsingButton(
                 .clickable(enabled = enabled) { onClick() },
             contentAlignment = Alignment.Center
         ) {
-            // Внутренняя граница (стеклянный эффект)
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -125,16 +119,14 @@ fun PulsingButton(
                     )
             )
 
-            // Контент кнопки
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp) // Увеличиваем отступы
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
             ) {
                 content()
             }
 
-            // Блик стекла (движущийся эффект)
             if (enabled) {
                 Box(
                     modifier = Modifier
@@ -160,10 +152,7 @@ fun PulsingButton(
                 )
             }
         }
-
-        // Дополнительные световые блики по краям
         if (enabled) {
-            // Левый блик
             Box(
                 modifier = Modifier
                     .size(width = 2.dp, height = 36.dp)
@@ -174,7 +163,6 @@ fun PulsingButton(
                     )
             )
 
-            // Правый блик
             Box(
                 modifier = Modifier
                     .size(width = 2.dp, height = 36.dp)

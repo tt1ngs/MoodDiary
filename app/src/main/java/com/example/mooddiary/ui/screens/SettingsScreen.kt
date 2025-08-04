@@ -124,7 +124,6 @@ fun NotificationSettings() {
                 
                 Spacer(modifier = Modifier.width(16.dp))
                 
-                // Упрощенный селектор времени
                 Card(
                     onClick = { /* TODO: Открыть TimePicker */ },
                     colors = CardDefaults.cardColors(

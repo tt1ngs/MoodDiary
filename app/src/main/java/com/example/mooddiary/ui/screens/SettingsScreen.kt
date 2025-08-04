@@ -36,7 +36,6 @@ fun SettingsScreen(
             .verticalScroll(scrollState)
             .padding(16.dp)
     ) {
-        // Заголовок
         Text(
             text = "Настройки",
             style = MaterialTheme.typography.headlineMedium,
@@ -48,22 +47,18 @@ fun SettingsScreen(
         
         Spacer(modifier = Modifier.height(24.dp))
         
-        // Уведомления
         NotificationSettings()
 
         Spacer(modifier = Modifier.height(16.dp))
         
-        // Тема
         ThemeSettings()
 
         Spacer(modifier = Modifier.height(16.dp))
         
-        // Экспорт данных
         ExportSettings()
 
         Spacer(modifier = Modifier.height(16.dp))
         
-        // О приложении
         AboutSettings()
     }
 }

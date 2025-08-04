@@ -96,7 +96,6 @@ fun MoodBarChart(
         Spacer(modifier = Modifier.height(16.dp))
 
         Column {
-            // График
             Canvas(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -108,7 +107,6 @@ fun MoodBarChart(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Эмоции под столбцами
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -161,12 +159,10 @@ fun YearlyMoodGrid(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Сетка месяцев и дней
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            // Заголовки месяцев
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -184,7 +180,6 @@ fun YearlyMoodGrid(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Сетка дней (упрощенная версия - по 31 дню для каждого месяца)
             for (week in 1..5) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -207,7 +202,6 @@ fun YearlyMoodGrid(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Легенда
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -315,7 +309,6 @@ private fun DrawScope.drawMoodLineChart(
     gradientPath.lineTo(size.width * animationProgress, size.height)
     gradientPath.close()
 
-    // Рисуем градиентную заливку
     drawPath(
         path = gradientPath,
         brush = Brush.verticalGradient(
@@ -326,14 +319,12 @@ private fun DrawScope.drawMoodLineChart(
         )
     )
 
-    // Рисуем основную линию
     drawPath(
         path = path,
         color = MoodVeryHappy,
         style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
     )
 
-    // Рисуем точки
     sortedEntries.forEachIndexed { index, entry ->
         if (animationProgress > index.toFloat() / sortedEntries.size) {
             val x = index * stepX * animationProgress
@@ -367,17 +358,14 @@ private fun DrawScope.drawMoodBarChart(
         val x = index * barWidth + barWidth * 0.1f
         val barActualWidth = barWidth * 0.8f
 
-        // Рисуем столбец
         drawRoundRect(
             color = getMoodColor(mood),
             topLeft = androidx.compose.ui.geometry.Offset(x, size.height - barHeight),
             size = androidx.compose.ui.geometry.Size(barActualWidth, barHeight),
             cornerRadius = androidx.compose.ui.geometry.CornerRadius(8.dp.toPx())
         )
-
-        // Рисуем значение сверху
         if (count > 0 && animationProgress > 0.8f) {
-            // Здесь можно добавить отрисовку текста с количеством
+            // TODO: добавить отрисовку текста с количеством
         }
     }
 }

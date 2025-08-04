@@ -45,7 +45,6 @@ fun DayDetailScreen(
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        // Заголовок с кнопкой назад
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -78,20 +77,15 @@ fun DayDetailScreen(
         }
 
         if (moodEntry != null) {
-            // Карточка настроения
             MoodCard(moodEntry = moodEntry)
 
-            // Карточка с заметкой
             if (moodEntry.note.isNotBlank()) {
                 NoteCard(note = moodEntry.note)
             }
-
-            // AI анализ
             moodEntry.sentimentScore?.let { score ->
                 AIAnalysisCard(sentimentScore = score)
             }
         } else {
-            // Пустое состояние
             EmptyDayCard()
         }
     }

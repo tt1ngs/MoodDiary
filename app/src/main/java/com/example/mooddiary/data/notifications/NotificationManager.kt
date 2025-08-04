@@ -21,13 +21,10 @@ class NotificationManager @Inject constructor(
         if (preferences.notificationsEnabled) {
             val workManager = WorkManager.getInstance(context)
 
-            // Отменяем существующие уведомления
             workManager.cancelUniqueWork(MoodReminderWorker.WORK_NAME)
 
-            // Вычисляем время до первого уведомления
             val delay = calculateInitialDelay(preferences.notificationTimeHour, preferences.notificationTimeMinute)
 
-            // Создаем периодическую работу
             val reminderRequest = PeriodicWorkRequestBuilder<MoodReminderWorker>(1, TimeUnit.DAYS)
                 .setInitialDelay(delay, TimeUnit.MILLISECONDS)
                 .setConstraints(
@@ -39,7 +36,6 @@ class NotificationManager @Inject constructor(
                 .addTag("mood_reminder")
                 .build()
 
-            // Запускаем работу
             workManager.enqueueUniquePeriodicWork(
                 MoodReminderWorker.WORK_NAME,
                 ExistingPeriodicWorkPolicy.REPLACE,
@@ -56,13 +52,11 @@ class NotificationManager @Inject constructor(
         val calendar = Calendar.getInstance()
         val now = calendar.timeInMillis
 
-        // Устанавливаем время уведомления
         calendar.set(Calendar.HOUR_OF_DAY, hour)
         calendar.set(Calendar.MINUTE, minute)
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
 
-        // Если время уже прошло сегодня, планируем на завтра
         if (calendar.timeInMillis <= now) {
             calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
@@ -72,7 +66,6 @@ class NotificationManager @Inject constructor(
 
     suspend fun updateNotificationTime(hour: Int, minute: Int) {
         userPreferencesRepository.updateNotificationTime(hour, minute)
-        // Перепланируем уведомления с новым временем
         scheduleNotifications()
     }
 

@@ -35,7 +35,6 @@ fun HomeScreen(
     var noteText by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
 
-    // Получаем ViewModel для доступа к uiState
     val viewModel: com.example.mooddiary.ui.viewmodel.MoodDiaryViewModel = androidx.hilt.navigation.compose.hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
@@ -44,7 +43,6 @@ fun HomeScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Фоновый эффект
         AnimatedBackground(
             selectedMood = selectedMood,
             modifier = Modifier.fillMaxSize()
@@ -59,7 +57,6 @@ fun HomeScreen(
         ) {
             Spacer(modifier = Modifier.height(40.dp))
 
-            // Заголовок
             Text(
                 text = stringResource(R.string.home_title),
                 style = MaterialTheme.typography.headlineLarge,
@@ -81,7 +78,6 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(48.dp))
 
-            // Карусельный селектор настроения
             CarouselMoodSelector(
                 selectedMood = selectedMood,
                 onMoodSelected = { selectedMood = it },
@@ -90,7 +86,6 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(48.dp))
 
-            // Стеклянная карточка для заметки
             GlassCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -132,7 +127,6 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Пульсирующая кнопка сохранения
             PulsingButton(
                 onClick = {
                     selectedMood?.let { mood ->
@@ -150,19 +144,17 @@ fun HomeScreen(
                     text = stringResource(R.string.save_entry),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White, // Изменяю с черного на белый для лучшей читаемости
+                    color = Color.White,
                     fontSize = 18.sp
                 )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Показать выбранное настроение
             selectedMood?.let { mood ->
                 MoodPreview(mood = mood)
             }
 
-            // AI рекомендации
             uiState.aiRecommendation?.let { recommendation ->
                 Spacer(modifier = Modifier.height(16.dp))
                 AIRecommendationCard(
